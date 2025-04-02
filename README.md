@@ -1,0 +1,2 @@
+# UnityShaderCompiler
+编译Unity引擎的Shader文件，能够将其转换为各个图形API的原生Shader，并提供全面的Shader性能分析功能，支持导出详细的性能分析报告。
