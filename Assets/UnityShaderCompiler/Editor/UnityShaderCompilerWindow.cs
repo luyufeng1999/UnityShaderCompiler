@@ -30,7 +30,6 @@ public partial class UnityShaderCompilerWindow : EditorWindow
         outputPaths.LoadData();
         externalToolsSettings.LoadData();
         compileOptions.LoadData();
-        InitializeTool();
     }
     void OnGUI()
     {

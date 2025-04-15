@@ -1,58 +1,97 @@
 ﻿using System;
 using System.IO;
 using UnityEditor;
+using UnityEngine;
 
 public partial class UnityShaderCompilerWindow
 {
-    private AOC aoc;
-    private MaliOC malioc;
-    private ShaderLabLabCompiler compiler;
     private ReportParser reportParser;
-    private void InitializeTool()
+
+    #region 编译Shader
+    private void CompileVariantCollections()
     {
-        aoc = new AOC(externalToolsSettings.aocPath, AOC.Architecture.a608, AOC.API.Vulkan);
-        malioc = new MaliOC(externalToolsSettings.maliocPath, MaliOC.Architecture.Mali_G76);
-        compiler = new ShaderLabLabCompiler(compileOptions.selectedShaderPlatform, compileOptions.selectedBuildTarget, outputPaths.shdaerPath);
-        reportParser = new ReportParser(externalToolsSettings.reportParserPath);
-        externalToolsSettings.OnAOCPathChanged += aoc.OnPathChanged;
-        externalToolsSettings.OnMaliOCPathChanged += malioc.OnPathChanged;
-        externalToolsSettings.OnReportParserPathChanged += reportParser.OnPathChanged;
-        compileOptions.OnShaderCompilerPlatformChange += compiler.OnShaderCompilerPlatformChange;
-        compileOptions.OnBuildTargetChange += compiler.OnBuildTargetChange;
-        outputPaths.OnShaderPathChange += compiler.OnOutputPathChange;
-        
+        foreach (var collection in compileOptions.collections)
+        {
+            ShaderLabCompiler.CompileVariantCollection(collection, compileOptions.selectedShaderPlatform, compileOptions.selectedBuildTarget, out var compileResults);
+            foreach (var compileResult in compileResults)
+            {
+                if (compileResult.compileInfo.Success)
+                {
+                    File.WriteAllBytes(Path.Combine(outputPaths.shdaerPath, compileResult.variantInfo.GetShaderFileName()), compileResult.compileInfo.ShaderData);    
+                }
+            }
+        }
+        outputPaths.LoadFileList();
+        AssetDatabase.Refresh();
     }
+    #endregion
+    
+    
+
+    #region 生成报告
     private void GenerateReport()
     {
-        IOfflineCompiler offlineCompiler; 
         switch (externalToolsSettings.selectedTool)
         {
             case ExternalToolsSettings.OfflineCompiler.Adreno:
-                offlineCompiler = aoc;
+                GenerateAOCReport();
                 break;
             case ExternalToolsSettings.OfflineCompiler.Mali:
-                offlineCompiler = malioc;
+                GenerateMaliOCReport();
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
         }
+        AssetDatabase.Refresh();
+    }
 
+    private void GenerateAOCReport()
+    {
+        AdrenoOfflineCompiler aoc = new AdrenoOfflineCompiler(externalToolsSettings.aocPath);
         foreach (var shaderFile in outputPaths.shaderFiles)
         {
             string fileName = Path.GetFileName(shaderFile);
             string reportPath = Path.Combine(outputPaths.shaderReportPath, fileName);
-            offlineCompiler.Compile(shaderFile, reportPath);
+            AdrenoOfflineCompiler.CompileReport report = aoc.Compile(shaderFile, externalToolsSettings.aocArch);
+            if (report.errorMessage != null)
+            {
+                Debug.LogError(report.errorMessage);
+                continue;
+            }
+            File.WriteAllText(reportPath, report.reportData);
         }
-        AssetDatabase.Refresh();
     }
 
+    private void GenerateMaliOCReport()
+    {
+        MaliOfflineCompiler malioc = new MaliOfflineCompiler(externalToolsSettings.maliocPath);
+        foreach (var shaderFile in outputPaths.shaderFiles)
+        {
+            string fileName = Path.GetFileName(shaderFile);
+            string reportPath = Path.Combine(outputPaths.shaderReportPath, fileName);
+            MaliOfflineCompiler.CompileReport report = malioc.Compile(shaderFile, externalToolsSettings.maliocArch);
+            if (report.errorMessage != null)
+            {
+                Debug.LogError(report.errorMessage);
+                continue;
+            }
+            File.WriteAllText(reportPath, report.reportData);
+        }
+    }
+    
+
+    #endregion
+
+    #region 导出报告
     private void ExportReports()
     {
         string path = EditorUtility.SaveFilePanel("选择保存位置", "", "shader_report_stats", "csv");
+        reportParser = new ReportParser(externalToolsSettings.reportParserPath);
         reportParser.Parser(outputPaths.shaderReportPath, path);
         AssetDatabase.Refresh();
     }
-
+    #endregion
+    
     private void ClearReports()
     {
         DirectoryInfo directoryInfo = new DirectoryInfo(outputPaths.shaderReportPath);
@@ -61,16 +100,6 @@ public partial class UnityShaderCompilerWindow
         {
             File.Delete(file.FullName);
         }
-        AssetDatabase.Refresh();
-    }
-
-    private void CompileVariantCollections()
-    {
-        foreach (var collection in compileOptions.collections)
-        {
-            compiler.CompileVariantCollection(collection);    
-        }
-        outputPaths.LoadFileList();
         AssetDatabase.Refresh();
     }
 }

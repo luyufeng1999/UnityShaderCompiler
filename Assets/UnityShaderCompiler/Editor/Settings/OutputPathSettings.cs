@@ -9,10 +9,6 @@ public class OutputPathSettings : IUnityShaderCompilerSettings
     public const string SHADER_PATH_KEYS = "OutputPaths_Shader";
     public const string SHADER_REPORT_PATH_KEYS = "OutputPaths_ShaderReport";
     
-    
-    public Action<string> OnShaderPathChange;
-    public Action<string> OnShaderReportPathChange;
-    
     private string _shdaerPath;
     public string shdaerPath
     {
@@ -26,11 +22,11 @@ public class OutputPathSettings : IUnityShaderCompilerSettings
             {
                 _shdaerPath = value;
                 EditorPrefs.SetString(SHADER_PATH_KEYS, _shdaerPath);
-                OnShaderPathChange(_shdaerPath);
             }
         }
     }
 
+    private static string path = Application.streamingAssetsPath;
     private string _shaderReportPath;
     public string shaderReportPath
     {
@@ -44,7 +40,6 @@ public class OutputPathSettings : IUnityShaderCompilerSettings
             {
                 _shaderReportPath = value;
                 EditorPrefs.SetString(SHADER_REPORT_PATH_KEYS, _shaderReportPath);
-                OnShaderReportPathChange(_shaderReportPath);
             }
         }
     }
@@ -86,7 +81,7 @@ public class OutputPathSettings : IUnityShaderCompilerSettings
         foreach (string file in shaderFiles)
         {
             File.Delete(file);  // 删除文件
-        }
+        } 
         shaderFiles.Clear();
         AssetDatabase.Refresh();
     }

@@ -9,9 +9,6 @@ public class CompileOptions : IUnityShaderCompilerSettings
     public const string SHADER_PLATFORM_KEY = "SelectedShaderPlatform";
     public const string BUILD_TARGET_KEY = "SelectedBuildTarget";
     private const string SHADER_VARIANTS_KEY = "ShaderVariantConfig";
-
-    public Action<ShaderCompilerPlatform> OnShaderCompilerPlatformChange;
-    public Action<BuildTarget> OnBuildTargetChange;
     
     private ShaderCompilerPlatform _selectedShaderPlatform;
     public ShaderCompilerPlatform selectedShaderPlatform
@@ -27,7 +24,6 @@ public class CompileOptions : IUnityShaderCompilerSettings
             {
                 _selectedShaderPlatform = value;
                 EditorPrefs.SetInt(SHADER_PLATFORM_KEY, (int)selectedShaderPlatform);
-                OnShaderCompilerPlatformChange(_selectedShaderPlatform);
             }
         }
     }
@@ -46,7 +42,6 @@ public class CompileOptions : IUnityShaderCompilerSettings
             {
                 _selectedBuildTarget = value;
                 EditorPrefs.SetInt(BUILD_TARGET_KEY, (int)_selectedBuildTarget);
-                OnBuildTargetChange(_selectedBuildTarget);
             }
         }
     }

@@ -38,15 +38,6 @@ public class ExternalToolsSettings : IUnityShaderCompilerSettings
             }
         }
         
-        public Action<string> OnAOCPathChanged;
-        public Action<AOC.Architecture> OnAOCArchitectureChanged;
-        public Action<AOC.API> OnAOCAPIChanged;
-        
-        public Action<string> OnMaliOCPathChanged;
-        public Action<MaliOC.Architecture> OnMaliOCArchitectureChanged;
-        
-        public Action<string> OnReportParserPathChanged;
-
         private string _aocPath;
         public string aocPath
         {
@@ -60,7 +51,6 @@ public class ExternalToolsSettings : IUnityShaderCompilerSettings
                 {
                     _aocPath = value;
                     EditorPrefs.SetString(AOC_PATH_KEYS, _aocPath);
-                    OnAOCPathChanged(_aocPath);
                 }
             }
         }
@@ -78,7 +68,6 @@ public class ExternalToolsSettings : IUnityShaderCompilerSettings
                 {
                     _maliocPath = value;
                     EditorPrefs.SetString(MALIOC_PATH_KEYS, _maliocPath);
-                    OnMaliOCPathChanged(_maliocPath);
                 }
             }
         }
@@ -96,15 +85,14 @@ public class ExternalToolsSettings : IUnityShaderCompilerSettings
                 {
                     _reportParserPath = value;
                     EditorPrefs.SetString(REPORT_PARSER_PATH_KEYS, _reportParserPath);
-                    OnReportParserPathChanged(_reportParserPath);
                 }
             }
         }
         
 
-        private AOC.Architecture _aocArch;
+        private AdrenoOfflineCompiler.Architecture _aocArch;
 
-        public AOC.Architecture aocArch
+        public AdrenoOfflineCompiler.Architecture aocArch
         {
             get
             {
@@ -116,14 +104,13 @@ public class ExternalToolsSettings : IUnityShaderCompilerSettings
                 {
                     _aocArch = value;
                     EditorPrefs.SetInt(AOC_ARCHITECTURE_KEYS, (int)_aocArch);
-                    OnAOCArchitectureChanged(_aocArch);
                 }
             }
             
         }
         
-        private AOC.API _aocAPI;
-        public AOC.API aocAPI
+        private AdrenoOfflineCompiler.API _aocAPI;
+        public AdrenoOfflineCompiler.API aocAPI
         {
             get
             {
@@ -135,15 +122,14 @@ public class ExternalToolsSettings : IUnityShaderCompilerSettings
                 {
                     _aocAPI = value;
                     EditorPrefs.SetInt(AOC_API_KEYS, (int)_aocAPI);
-                    OnAOCAPIChanged(_aocAPI);
                 }
             }
             
         }
         
-        private MaliOC.Architecture _maliocArch;
+        private MaliOfflineCompiler.Architecture _maliocArch;
 
-        public MaliOC.Architecture maliocArch
+        public MaliOfflineCompiler.Architecture maliocArch
         {
             get
             {
@@ -155,7 +141,6 @@ public class ExternalToolsSettings : IUnityShaderCompilerSettings
                 {
                     _maliocArch = value;
                     EditorPrefs.SetInt(MALIOC_ARCHITECTURE_KEYS, (int)_maliocArch);
-                    OnMaliOCArchitectureChanged(_maliocArch);
                 }
             }
         }
@@ -164,12 +149,10 @@ public class ExternalToolsSettings : IUnityShaderCompilerSettings
         {
             _selectedTool = (OfflineCompiler)EditorPrefs.GetInt(SELECTED_OFFLINE_COMPILER_KEY, (int)_selectedTool);
             _aocPath = EditorPrefs.GetString(AOC_PATH_KEYS, "");
-            _aocArch = (AOC.Architecture)EditorPrefs.GetInt(AOC_ARCHITECTURE_KEYS, (int)AOC.Architecture.None);
-            _aocAPI = (AOC.API)EditorPrefs.GetInt(AOC_API_KEYS, (int)AOC.API.None);
-            
+            _aocArch = (AdrenoOfflineCompiler.Architecture)EditorPrefs.GetInt(AOC_ARCHITECTURE_KEYS, (int)AdrenoOfflineCompiler.Architecture.None);
+            _aocAPI = (AdrenoOfflineCompiler.API)EditorPrefs.GetInt(AOC_API_KEYS, (int)AdrenoOfflineCompiler.API.None);
             _maliocPath = EditorPrefs.GetString(MALIOC_PATH_KEYS, "");
-            _maliocArch = (MaliOC.Architecture)EditorPrefs.GetInt(MALIOC_ARCHITECTURE_KEYS, (int)MaliOC.Architecture.None);
-            
+            _maliocArch = (MaliOfflineCompiler.Architecture)EditorPrefs.GetInt(MALIOC_ARCHITECTURE_KEYS, (int)MaliOfflineCompiler.Architecture.None);
             _reportParserPath = EditorPrefs.GetString(REPORT_PARSER_PATH_KEYS, "");
         }
     }

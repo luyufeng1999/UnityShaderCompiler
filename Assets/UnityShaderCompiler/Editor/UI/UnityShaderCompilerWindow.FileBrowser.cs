@@ -35,11 +35,11 @@ public partial class UnityShaderCompilerWindow
             switch (externalToolsSettings.selectedTool)
             {
                 case ExternalToolsSettings.OfflineCompiler.Adreno:
-                    externalToolsSettings.aocArch = (AOC.Architecture)EditorGUILayout.EnumPopup(
+                    externalToolsSettings.aocArch = (AdrenoOfflineCompiler.Architecture)EditorGUILayout.EnumPopup(
                         externalToolsSettings.aocArch, GUILayout.Width(60));
                     break;
                 case ExternalToolsSettings.OfflineCompiler.Mali:
-                    externalToolsSettings.maliocArch = (MaliOC.Architecture)EditorGUILayout.EnumPopup(
+                    externalToolsSettings.maliocArch = (MaliOfflineCompiler.Architecture)EditorGUILayout.EnumPopup(
                         externalToolsSettings.maliocArch, GUILayout.Width(120));
                     break;
                 default:
